@@ -62,7 +62,7 @@ button{font:inherit; color:inherit}
 #app{height:100%; display:flex; flex-direction:column}
 
 /* top bar */
-.topbar{display:flex; align-items:baseline; gap:16px; padding:12px 24px 10px; border-bottom:1px solid var(--rule); flex-wrap:wrap}
+.topbar{position:relative; display:flex; align-items:baseline; gap:16px; padding:12px 24px 10px; border-bottom:1px solid var(--rule); flex-wrap:wrap}
 .brand{font-weight:800; font-size:20px; letter-spacing:-.2px}
 .casemeta{font-size:13px; color:var(--muted)}
 .topbar .spacer{flex:1}
@@ -70,6 +70,18 @@ button{font:inherit; color:inherit}
 .tabs button{border:0; background:var(--sheet); padding:6px 12px; font-size:13px; cursor:pointer; color:var(--muted)}
 .tabs button + button{border-left:1px solid var(--rule)}
 .tabs button[aria-pressed="true"]{color:var(--ink); font-weight:600; background:var(--paper)}
+
+.sbtn{border:1px solid var(--rule); background:var(--sheet); color:var(--ink); border-radius:6px; padding:6px 12px; font-size:13px; cursor:pointer}
+.sbtn[aria-pressed="true"]{border-color:var(--ink); font-weight:600}
+#soundPanel{position:absolute; right:24px; top:calc(100% + 6px); z-index:90; width:290px; max-width:calc(100vw - 32px); box-sizing:border-box; background:var(--sheet); border:1px solid var(--rule); border-radius:8px; padding:14px 16px; box-shadow:0 12px 30px rgba(0,0,0,.18); display:flex; flex-direction:column; gap:12px; font-size:14px}
+#soundPanel h3{margin:0; font-size:15px}
+#soundPanel .srcline{font-size:13px; color:var(--muted); overflow-wrap:anywhere}
+#soundPanel label.row2{display:flex; align-items:center; gap:10px}
+#soundPanel input[type=range]{flex:1; accent-color:var(--ink)}
+#soundPanel .filebtn{display:inline-block; border:1px solid var(--rule); border-radius:5px; padding:6px 11px; cursor:pointer; background:var(--paper)}
+#soundPanel .filebtn:focus-within{outline:2px solid var(--link)}
+#soundPanel .filebtn input{position:absolute; opacity:0; width:1px; height:1px}
+#soundPanel .note{font-size:12.5px; color:var(--muted); margin:0}
 
 /* stage */
 .stage{flex:1; min-height:0; display:grid; grid-template-columns:auto minmax(0,1fr); gap:32px; padding:20px 24px; max-width:1240px; width:100%; margin:0 auto; box-sizing:border-box}
@@ -348,6 +360,7 @@ details.truth p{font-size:15px; line-height:1.6; max-width:62ch}
 
 @media (max-width: 900px){
   .topbar{padding:10px 16px; gap:10px; align-items:center}
+  #soundPanel{right:16px}
   .casemeta{display:none}
   .tabs{display:flex}
   .stage{display:block; padding:10px 16px 12px}
@@ -374,6 +387,16 @@ details.truth p{font-size:15px; line-height:1.6; max-width:62ch}
     <div class="brand">Read Receipts</div>
     <div class="casemeta">Missing person: Nora Vance, 29, Harrow Point, Maine</div>
     <div class="spacer"></div>
+    <button class="sbtn" id="soundBtn" aria-pressed="false" aria-controls="soundPanel">Music off</button>
+    <div id="soundPanel" hidden>
+      <h3>Sound</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" id="musicToggle">Play music</button><button class="btn" id="ownClear" hidden>Use built-in score</button></div>
+      <div class="srcline" id="musicSrc">Playing the built-in score</div>
+      <label class="row2" for="vol">Volume <input id="vol" type="range" min="0" max="1" step="0.05" value="0.6"></label>
+      <label class="row2" for="sfx"><input id="sfx" type="checkbox" checked> Notification sounds</label>
+      <div><label class="filebtn">Play your own song<input id="ownFile" type="file" accept="audio/*"></label></div>
+      <p class="note">Pick any MP3 or other audio file from your device. It loops in the background and stays on your device. You'll need to pick it again after reloading.</p>
+    </div>
     <div class="tabs" role="group" aria-label="View">
       <button id="tabPhone" aria-pressed="true">Phone</button>
       <button id="tabBoard" aria-pressed="false">Case notes (<span id="tabCount">0</span>)</button>
@@ -1200,6 +1223,7 @@ function addClue(id){
   if (S.found[id]) return;
   const before = objState().filter(x => x.st === 'done').map(x => x.o.id);
   S.found[id] = ++S.n; UI.fresh = id; save();
+  if (typeof Sound !== 'undefined') Sound.mark();
   const after = objState().filter(x => x.st === 'done').map(x => x.o.id);
   const newly = OBJECTIVES.filter(o => after.includes(o.id) && !before.includes(o.id));
   toast(newly.length ? `<b>${esc(CLUES[id].title)}</b> added. Done: ${esc(newly[0].text)}.` : `<b>${esc(CLUES[id].title)}</b> added to your case notes.`);
@@ -1583,6 +1607,7 @@ function banner(tid, text){
   const el = $('#banner');
   el.innerHTML = `<button data-act="banner" data-t="${tid}"><small><span>${T.app === 'whisper' ? 'Whisper' : 'Messages'}</span><span>now</span></small><b>${esc(threadName(tid))}</b><p>${esc(text)}</p></button>`;
   el.classList.add('show');
+  if (typeof Sound !== 'undefined') Sound.ding();
   clearTimeout(bannerT); bannerT = setTimeout(() => el.classList.remove('show'), 6000);
   renderHomeBadges();
   if (UI.nav[UI.nav.length-1].v === 'home' || UI.nav[UI.nav.length-1].v === 'msgs' || UI.nav[UI.nav.length-1].v === 'whisper') render();
@@ -1767,7 +1792,7 @@ function showLetter(){
       <p>I can't make myself read it. Please find out what happened to my girl.</p>
       <p class="sig">Ruth Vance</p>
     </div>
-    <div class="actions"><button class="btn primary" data-act="closeletter">${S.stage === 'intro' ? 'Take the phone' : 'Close'}</button></div>`);
+    <div class="actions">${S.stage === 'intro' ? '<button class="btn" data-act="closeletter">Take the phone</button><button class="btn primary" data-act="closeletter" data-music="1">Take the phone, with music</button>' : '<button class="btn primary" data-act="closeletter">Close</button>'}</div>`);
 }
 function showReport(){
   const qs = QUESTIONS.map((q, qi) => `<div class="q"><fieldset><legend>${qi+1}. ${esc(q.q)}</legend>${q.opts.map((o, oi) => `<label class="opt"><input type="${q.multi ? 'checkbox' : 'radio'}" name="${q.id}" value="${oi}" id="${q.id}-${oi}"> <span>${esc(o)}</span></label>`).join('')}</fieldset></div>`).join('');
@@ -1791,7 +1816,7 @@ function score(ans){
 $('#modal').addEventListener('click', e => {
   const b = e.target.closest('[data-act]'); if (!b) return;
   if (b.dataset.act === 'close') closeModal();
-  if (b.dataset.act === 'closeletter'){ if (S.stage === 'intro'){ S.stage = 'locked'; save(); render(true); renderBoard(); } closeModal(); }
+  if (b.dataset.act === 'closeletter'){ if (b.dataset.music && typeof Sound !== 'undefined') Sound.start(); if (S.stage === 'intro'){ S.stage = 'locked'; save(); render(true); renderBoard(); } closeModal(); }
 });
 $('#modal').addEventListener('submit', e => {
   if (e.target.id !== 'repform') return;
@@ -1888,5 +1913,163 @@ function start(data){
 }
 try { window.claude?.hot?.snapshot?.(() => ({ nav: UI.nav })); } catch(e){}
 window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+// ===================== SOUND =====================
+// Built-in score is generated live with Web Audio: a slow minor pad, a sparse
+// piano line with echo, and filtered noise for the sea. Or play your own file.
+const SOUND_KEY = 'read-receipts-sound';
+const Sound = {
+  ctx:null, master:null, musicBus:null, sfxBus:null, playing:false, timer:null, chordI:0,
+  pref:{ on:false, vol:0.6, sfx:true },
+  own:null, ownName:'',
+  loadPref(){ try { Object.assign(this.pref, JSON.parse(localStorage.getItem(SOUND_KEY)) || {}); } catch(e){} },
+  savePref(){ try { localStorage.setItem(SOUND_KEY, JSON.stringify(this.pref)); } catch(e){} },
+  ensure(){
+    if (this.ctx) { if (this.ctx.state === 'suspended') this.ctx.resume(); return true; }
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false;
+    this.ctx = new AC();
+    this.master = this.ctx.createGain(); this.master.gain.value = this.pref.vol; this.master.connect(this.ctx.destination);
+    this.musicBus = this.ctx.createGain(); this.musicBus.gain.value = 0.0001; this.musicBus.connect(this.master);
+    this.sfxBus = this.ctx.createGain(); this.sfxBus.gain.value = 0.5; this.sfxBus.connect(this.master);
+    // echo for the piano line
+    this.delay = this.ctx.createDelay(2); this.delay.delayTime.value = 0.48;
+    const fb = this.ctx.createGain(); fb.gain.value = 0.38;
+    const dl = this.ctx.createBiquadFilter(); dl.type = 'lowpass'; dl.frequency.value = 1800;
+    this.delay.connect(dl); dl.connect(fb); fb.connect(this.delay); dl.connect(this.musicBus);
+    return true;
+  },
+  setVol(v){ this.pref.vol = v; this.savePref(); if (this.master) this.master.gain.setTargetAtTime(v, this.ctx.currentTime, 0.1); if (this.own) this.own.volume = Math.min(1, v); },
+  start(){
+    if (!this.ensure()) return;
+    this.pref.on = true; this.savePref();
+    if (this.own){ this.own.volume = Math.min(1, this.pref.vol); this.own.play().catch(() => {}); this.playing = true; return syncSoundUI(); }
+    if (this.playing) return;
+    this.playing = true;
+    const t = this.ctx.currentTime;
+    this.musicBus.gain.cancelScheduledValues(t);
+    this.musicBus.gain.setValueAtTime(Math.max(0.0001, this.musicBus.gain.value), t);
+    this.musicBus.gain.exponentialRampToValueAtTime(0.9, t + 3);
+    this.sea();
+    this.chordI = 0; this.step();
+    this.timer = setInterval(() => this.step(), 8000);
+    syncSoundUI();
+  },
+  stop(){
+    this.pref.on = false; this.savePref(); this.playing = false;
+    clearInterval(this.timer); this.timer = null;
+    if (this.own) this.own.pause();
+    if (this.ctx){
+      const t = this.ctx.currentTime;
+      this.musicBus.gain.cancelScheduledValues(t);
+      this.musicBus.gain.setValueAtTime(Math.max(0.0001, this.musicBus.gain.value), t);
+      this.musicBus.gain.exponentialRampToValueAtTime(0.0001, t + 1.5);
+      if (this.seaSrc){ try { this.seaSrc.stop(t + 1.6); } catch(e){} this.seaSrc = null; }
+    }
+    syncSoundUI();
+  },
+  hz(m){ return 440 * Math.pow(2, (m - 69) / 12); },
+  CHORDS:[ [50,57,60,64,65], [46,53,57,62,65], [41,53,57,60,64], [45,52,55,60,64] ], // Dm9, Bbmaj7, Fmaj7, Am7
+  SCALE:[62,65,67,69,72,74,77,79,81],
+  step(){
+    if (!this.playing || this.own) return;
+    const c = this.ctx, t = c.currentTime + 0.05, chord = this.CHORDS[this.chordI++ % this.CHORDS.length];
+    chord.forEach((m, i) => this.pad(this.hz(m), t + i * 0.12, 8.6));
+    // a few sparse piano notes over each chord
+    const n = 2 + Math.floor(Math.random() * 3);
+    for (let i = 0; i < n; i++){
+      if (Math.random() < 0.25) continue;
+      const note = this.SCALE[Math.floor(Math.random() * this.SCALE.length)];
+      this.piano(this.hz(note), t + 0.8 + i * (1.4 + Math.random() * 1.2));
+    }
+  },
+  pad(f, t, dur){
+    const c = this.ctx, g = c.createGain(), lp = c.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.setValueAtTime(500, t); lp.frequency.linearRampToValueAtTime(950, t + dur / 2); lp.frequency.linearRampToValueAtTime(500, t + dur);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.035, t + 2.6); g.gain.setValueAtTime(0.035, t + dur - 3); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    [-6, 6].forEach(d => { const o = c.createOscillator(); o.type = 'triangle'; o.frequency.value = f; o.detune.value = d; o.connect(lp); o.start(t); o.stop(t + dur + 0.1); });
+    lp.connect(g); g.connect(this.musicBus);
+  },
+  piano(f, t){
+    const c = this.ctx, g = c.createGain();
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.07, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 2.8);
+    const o1 = c.createOscillator(); o1.type = 'sine'; o1.frequency.value = f;
+    const o2 = c.createOscillator(); o2.type = 'triangle'; o2.frequency.value = f * 2; const g2 = c.createGain(); g2.gain.value = 0.15;
+    o1.connect(g); o2.connect(g2); g2.connect(g);
+    g.connect(this.musicBus); g.connect(this.delay);
+    o1.start(t); o2.start(t); o1.stop(t + 3); o2.stop(t + 3);
+  },
+  sea(){
+    const c = this.ctx, len = c.sampleRate * 4, buf = c.createBuffer(1, len, c.sampleRate), d = buf.getChannelData(0);
+    let last = 0; for (let i = 0; i < len; i++){ last = (last + 0.02 * (Math.random() * 2 - 1)) / 1.02; d[i] = last * 3.5; }
+    const src = c.createBufferSource(); src.buffer = buf; src.loop = true;
+    const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 420;
+    const g = c.createGain(); g.gain.value = 0.10;
+    const lfo = c.createOscillator(); lfo.frequency.value = 0.09; const lg = c.createGain(); lg.gain.value = 0.07;
+    lfo.connect(lg); lg.connect(g.gain); lfo.start();
+    src.connect(lp); lp.connect(g); g.connect(this.musicBus); src.start();
+    this.seaSrc = src;
+  },
+  useOwn(file){
+    if (!file) return;
+    this.ensure();
+    if (this.own){ this.own.pause(); URL.revokeObjectURL(this.own.src); }
+    const wasPlaying = this.playing;
+    if (wasPlaying && !this.own){ this.stop(); }
+    this.own = new Audio(URL.createObjectURL(file)); this.own.loop = true; this.ownName = file.name;
+    this.playing = false; this.start();
+    if (!wasPlaying) syncSoundUI();
+  },
+  clearOwn(){
+    if (!this.own) return;
+    const was = this.playing; this.own.pause(); URL.revokeObjectURL(this.own.src); this.own = null; this.ownName = ''; this.playing = false;
+    if (was) this.start(); else syncSoundUI();
+  },
+  // effects
+  ding(){
+    if (!this.pref.sfx || !this.ctx) return;
+    const c = this.ctx, t = c.currentTime;
+    [[1318.5, 0], [1760, 0.11]].forEach(([f, d]) => {
+      const o = c.createOscillator(), g = c.createGain(); o.type = 'sine'; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, t + d); g.gain.exponentialRampToValueAtTime(0.25, t + d + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + d + 0.5);
+      o.connect(g); g.connect(this.sfxBus); o.start(t + d); o.stop(t + d + 0.6);
+    });
+  },
+  mark(){
+    if (!this.pref.sfx || !this.ctx) return;
+    const c = this.ctx, t = c.currentTime, o = c.createOscillator(), g = c.createGain();
+    o.type = 'triangle'; o.frequency.setValueAtTime(660, t); o.frequency.exponentialRampToValueAtTime(990, t + 0.08);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.18, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
+    o.connect(g); g.connect(this.sfxBus); o.start(t); o.stop(t + 0.35);
+  },
+  tap(){
+    if (!this.pref.sfx || !this.ctx) return;
+    const c = this.ctx, t = c.currentTime, o = c.createOscillator(), g = c.createGain();
+    o.type = 'sine'; o.frequency.value = 1200;
+    g.gain.setValueAtTime(0.06, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
+    o.connect(g); g.connect(this.sfxBus); o.start(t); o.stop(t + 0.06);
+  },
+};
+
+function syncSoundUI(){
+  const b = $('#soundBtn'); if (!b) return;
+  b.textContent = Sound.playing ? 'Music on' : 'Music off';
+  b.setAttribute('aria-pressed', Sound.playing);
+  const t = $('#musicToggle'); if (t) t.textContent = Sound.playing ? 'Stop music' : 'Play music';
+  const src = $('#musicSrc'); if (src) src.textContent = Sound.own ? `Playing your file: ${Sound.ownName}` : 'Playing the built-in score';
+  const cl = $('#ownClear'); if (cl) cl.hidden = !Sound.own;
+  const v = $('#vol'); if (v) v.value = Sound.pref.vol;
+  const fx = $('#sfx'); if (fx) fx.checked = Sound.pref.sfx;
+}
+Sound.loadPref();
+$('#soundBtn').addEventListener('click', () => { const p = $('#soundPanel'); p.hidden = !p.hidden; Sound.ensure(); syncSoundUI(); });
+$('#musicToggle').addEventListener('click', () => Sound.playing ? Sound.stop() : Sound.start());
+$('#vol').addEventListener('input', e => Sound.setVol(+e.target.value));
+$('#sfx').addEventListener('change', e => { Sound.pref.sfx = e.target.checked; Sound.savePref(); });
+$('#ownFile').addEventListener('change', e => { Sound.useOwn(e.target.files[0]); e.target.value = ''; });
+$('#ownClear').addEventListener('click', () => Sound.clearOwn());
+document.addEventListener('click', e => { const p = $('#soundPanel'); if (!p.hidden && !e.target.closest('#soundPanel') && !e.target.closest('#soundBtn')) p.hidden = true; });
+// browsers only allow sound after a click, so pick up a saved "on" setting at the first one
+document.addEventListener('pointerdown', function first(){ document.removeEventListener('pointerdown', first, true); if (Sound.pref.on && !Sound.playing) Sound.start(); }, true);
+$('#screen').addEventListener('click', e => { if (e.target.closest('.key')) Sound.tap(); });
+syncSoundUI();
 </script>
 </html>
