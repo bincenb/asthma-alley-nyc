@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Asthma Alley Reel</title>
+<!-- 1080x1920 Instagram Reel. Every frame is a pure function of time: render(t). render.js steps t and records. -->
+<style>
+:root{
+  --bg:#111214; --ink:#ECEDEF; --ink2:#B4B8BD; --ink3:#8A8F95;
+  --hl:#F2C14E; --rust:#EC6A44; --cool:#6FA8DC; --green:#7FD08E; --land:#24262A;
+  --display:"Inter Display","Inter",sans-serif; --sans:"Inter",sans-serif; --mono:"JetBrains Mono",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg)}
+#stage{position:absolute;inset:0;overflow:hidden;color:var(--ink);font-family:var(--sans)}
+#bg{position:absolute;inset:0;background:radial-gradient(120% 80% at 50% 38%,#1C1E21 0%,#111214 60%,#0B0C0D 100%)}
+#grain{position:absolute;inset:0;opacity:.07;pointer-events:none;mix-blend-mode:overlay}
+.scene{position:absolute;inset:0;opacity:0}
+.abs{position:absolute}
+.h{font:800 76px/1.04 var(--display);letter-spacing:-.025em}
+.kick{font:600 30px/1 var(--mono);letter-spacing:.14em;color:var(--hl);text-transform:uppercase}
+.src{font:400 25px/1.35 var(--sans);color:var(--ink3)}
+.c{left:60px;right:60px;text-align:center}
+.l{left:72px;right:72px}
+#tag{position:absolute;left:72px;top:176px;font:600 24px/1 var(--mono);letter-spacing:.18em;color:var(--ink3)}
+#tag b{color:var(--hl);font-weight:600}
+
+/* s1 */
+#s1c{font:900 430px/1 var(--display);letter-spacing:-.05em;color:var(--hl);top:690px;text-align:center;left:0;right:0}
+#s1d{font:900 140px/1 var(--display);color:var(--rust);top:1150px;right:110px;letter-spacing:-.03em}
+/* s2 */
+.row{display:flex;align-items:baseline;gap:34px}
+.row .n{font:700 44px/1 var(--mono);color:var(--hl);width:70px;flex:none}
+.row .t{font:700 66px/1.08 var(--display);letter-spacing:-.02em}
+/* s3 */
+.big{font:900 210px/1 var(--display);letter-spacing:-.04em}
+.yr{font:600 34px/1 var(--mono);color:var(--ink3);letter-spacing:.1em}
+/* map */
+#map{position:absolute;left:90px;top:400px;width:900px;height:894px;opacity:0;overflow:visible}
+#map text{font-family:var(--sans);font-weight:700;paint-order:stroke;stroke:var(--bg);stroke-linejoin:round}
+/* stat rows */
+.stat{display:flex;align-items:center;gap:26px}
+.stat .v{font:900 78px/1 var(--display);letter-spacing:-.03em;color:var(--hl);flex:none;min-width:250px}
+.stat .d{font:600 34px/1.12 var(--sans);color:var(--ink)}
+.stat .d i{font-style:normal;color:var(--ink3)}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="bg"></div>
+  <svg id="map" viewBox="0 0 1001 994" preserveAspectRatio="xMidYMid meet">
+    <g id="cds"></g>
+    <path id="crz" fill="#F2C14E" stroke="#F2C14E"/>
+    <g id="lines" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path id="fdr" stroke="#6FA8DC"/>
+      <path id="route" stroke="#EC6A44"/>
+      <path id="route2" stroke="#EC6A44"/>
+      <path id="deegan" stroke="#7FD08E"/>
+      <path id="bruck" stroke="#7FD08E"/>
+    </g>
+    <g id="trees"></g>
+    <g id="schools"></g>
+    <circle id="truck" r="9" fill="#fff"/>
+    <g id="labels"></g>
+  </svg>
+  <div id="tag">ASTHMA ALLEY <b>·</b> NYC</div>
+
+  <section class="scene" id="s1">
+    <div class="abs c h" id="s1a" style="top:520px">NYC's congestion toll</div>
+    <div class="abs c h" id="s1b" style="top:610px;color:var(--ink2)">cut air pollution by</div>
+    <div class="abs" id="s1c">22%</div>
+    <div class="abs" id="s1d">…right?</div>
+    <div class="abs c" id="s1e" style="top:1340px;font:600 36px/1 var(--mono);color:var(--ink2);letter-spacing:.06em">We checked the data.</div>
+  </section>
+
+  <section class="scene" id="s2">
+    <div class="abs l h" id="s2a" style="top:330px">That 22% is real.</div>
+    <div class="abs l h" id="s2b" style="top:415px;color:var(--ink3)">But it only counted:</div>
+    <div class="abs l row" id="s2r1" style="top:690px"><span class="n">01</span><span class="t">each day's peak reading</span></div>
+    <div class="abs l row" id="s2r2" style="top:860px"><span class="n">02</span><span class="t">inside the toll zone</span></div>
+    <div class="abs l row" id="s2r3" style="top:1030px"><span class="n">03</span><span class="t">the first 5 months</span></div>
+    <div class="abs l h" id="s2c" style="top:1250px;color:var(--hl);font-size:64px">Not the air you breathe<br>all year.</div>
+  </section>
+
+  <section class="scene" id="s3">
+    <div class="abs c kick" id="s3k" style="top:400px">Whole city · whole year</div>
+    <div class="abs c h" id="s3h" style="top:460px;font-size:58px;color:var(--ink2)">Average PM2.5 pollution</div>
+    <div class="abs" id="s3n1" style="left:80px;top:640px;width:440px;text-align:center"><div class="big" id="s3v1">6.26</div><div class="yr" style="margin-top:18px">2024 · before</div></div>
+    <div class="abs" id="s3n2" style="left:560px;top:640px;width:440px;text-align:center"><div class="big" id="s3v2">6.29</div><div class="yr" style="margin-top:18px">2025 · after</div></div>
+    <svg class="abs" id="s3line" style="left:80px;top:930px" width="920" height="40"><line x1="20" y1="20" x2="900" y2="20" stroke="#F2C14E" stroke-width="6" stroke-linecap="round"/></svg>
+    <div class="abs c h" id="s3c" style="top:1040px;font-size:120px">Basically flat.</div>
+    <div class="abs c" id="s3s" style="top:1240px;font:500 38px/1.3 var(--sans);color:var(--ink2)">The Health Dept. found no statistically<br>significant change at any monitor.<br>Not even inside the zone.</div>
+  </section>
+
+  <section class="scene" id="s4">
+    <div class="abs l h" id="s4a" style="top:236px">So where did the<br>traffic go?</div>
+    <div class="abs l h" id="s4b" style="top:1330px;font-size:58px">Small shifts so far.<br><span style="color:var(--rust)">Toward the Bronx.</span></div>
+    <div class="abs l src" id="s4s" style="top:1490px">Bypass route drawn roughly. MTA crossings 2025 vs 2024.</div>
+  </section>
+
+  <section class="scene" id="s5">
+    <div class="abs l h" id="s5a" style="top:236px;font-size:66px">The 15 districts with<br>NYC's worst asthma rates</div>
+    <div class="abs" id="s5n" style="left:72px;top:440px;font:900 168px/1 var(--display);letter-spacing:-.04em;color:var(--rust)"><span id="s5v">0</span><span style="color:var(--ink3)">/15</span></div>
+    <div class="abs" id="s5d" style="left:76px;top:625px;width:330px;font:700 38px/1.18 var(--sans)">got worse NO₂ than the city in 2025</div>
+    <div class="abs l h" id="s5b" style="top:1330px;font-size:54px">The 3 years before?<br><span style="color:var(--ink3)">Only 3 to 10 of 15.</span></div>
+    <div class="abs l src" id="s5s" style="top:1490px">NO₂ change vs. citywide, NYCCAS. Adult asthma ER visits, 2023.</div>
+  </section>
+
+  <section class="scene" id="s6">
+    <div class="abs l h" id="s6a" style="top:236px;font-size:60px;color:var(--green)">8 get a share of the MTA's<br>$105M mitigation fund.</div>
+    <div class="abs" id="s6n" style="left:72px;top:440px;font:900 168px/1 var(--display);letter-spacing:-.04em;color:var(--rust)">$0</div>
+    <div class="abs" id="s6d" style="left:76px;top:625px;width:330px;font:700 38px/1.18 var(--sans)">for the other 7</div>
+    <div class="abs l" id="s6b" style="top:1330px;font:600 34px/1.45 var(--mono);color:var(--ink2)">Central Harlem · Kingsbridge Hts · Bed-Stuy · East New York · Brownsville · East Flatbush · Rockaways</div>
+  </section>
+
+  <section class="scene" id="s7">
+    <div class="abs l h" id="s7a" style="top:236px;font-size:58px;color:var(--ink3)">Ground zero:</div>
+    <div class="abs l h" id="s7b" style="top:304px;font-size:76px">Mott Haven, South Bronx</div>
+    <div class="abs l stat" id="s7r1" style="top:1300px"><span class="v">#1</span><span class="d">of 59 districts on<br><i>our priority index</i></span></div>
+    <div class="abs l stat" id="s7r2" style="top:1408px"><span class="v">3.8×</span><span class="d">the city's adult<br><i>asthma ER rate</i></span></div>
+    <div class="abs l stat" id="s7r3" style="top:1516px"><span class="v">7.1%</span><span class="d">tree canopy<br><i>city average: 21.1%</i></span></div>
+  </section>
+
+  <section class="scene" id="s8">
+    <div class="abs l h" id="s8a" style="top:236px;font-size:58px;color:var(--ink3)">Our fix:</div>
+    <div class="abs l h" id="s8b" style="top:304px;font-size:60px;color:var(--green)">A green wall on Bruckner Blvd.</div>
+    <div class="abs l stat" id="s8r1" style="top:1300px"><span class="v" style="color:var(--green)">262</span><span class="d">new trees + a 2.1 km<br><i>evergreen pollution barrier</i></span></div>
+    <div class="abs l stat" id="s8r2" style="top:1408px"><span class="v">$10–19M</span><span class="d">estimated<br><i>cost</i></span></div>
+    <div class="abs l stat" id="s8r3" style="top:1516px"><span class="v">$24M</span><span class="d">already set aside<br><i>by the MTA for this area</i></span></div>
+  </section>
+
+  <section class="scene" id="s9">
+    <div class="abs c h" id="s9a" style="top:560px;font-size:74px">Not proof the toll<br>caused it.</div>
+    <div class="abs c h" id="s9b" style="top:760px;font-size:74px;color:var(--hl)">A reason to measure.<br>And to plant.</div>
+    <div class="abs c" id="s9c" style="top:1060px;font:700 46px/1.25 var(--sans)">Send this to someone<br>who breathes Bronx air.</div>
+    <div class="abs c" id="s9d" style="top:1260px;font:600 32px/1.6 var(--mono);color:var(--ink2)">Full interactive map → link in bio<br><span style="color:var(--ink3);font-size:26px">CUNY Datathon 2026 · Asthma Alley After the Toll</span></div>
+  </section>
+
+  <svg id="grain" width="1080" height="1920"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1.4 -.2"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>
+</div>
+
+<script src="geo.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const cl=(x,a=0,b=1)=>x<a?a:x>b?b:x;
+const pr=(t,a,d)=>cl((t-a)/d);
+const lerp=(a,b,k)=>a+(b-a)*k;
+const eo=x=>1-Math.pow(1-x,3);
+const eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const eb=x=>{const c1=1.9,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
+const mix=(a,b,k)=>{const p=s=>[1,3,5].map(i=>parseInt(s.slice(i,i+2),16));const A=p(a),B=p(b);return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],k))).join(',')+')'};
+
+function rise(el,t,a,d=.45,dy=46){const k=eo(pr(t,a,d));el.style.opacity=k;el.style.transform=`translateY(${(1-k)*dy}px)`;}
+function pop(el,t,a,d=.5,s0=.5){const k=pr(t,a,d);el.style.opacity=cl(k*3);el.style.transform=`scale(${lerp(s0,1,eb(k))})`;}
+
+// Scene timeline in seconds.
+const S={s1:[0,3.2],s2:[3.2,7.4],s3:[7.4,10.8],s4:[10.8,16],s5:[16,20.5],s6:[20.5,24.5],s7:[24.5,29],s8:[29,34],s9:[34,38]};
+const DURATION=38;
+
+// ---------- map setup ----------
+const NS='http://www.w3.org/2000/svg';
+const mk=(tag,attrs,parent)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);parent&&parent.appendChild(e);return e};
+const cdEls=GEO.cds.map(c=>({...c,el:mk('path',{d:c.d},$('cds'))}));
+$('crz').setAttribute('d',GEO.crz);
+for(const k of ['route','route2','fdr','bruck','deegan'])$(k).setAttribute('d',GEO[k]);
+const LEN={};for(const k of ['route','route2','fdr','bruck','deegan'])LEN[k]=$(k).getTotalLength();
+const mott=cdEls.find(c=>c.id===201);
+const unfunded=cdEls.filter(c=>c.top>=0&&!c.funded);
+
+function label(id,x,y,lines,color,anchor='start'){
+  const t=mk('text',{id,x,y,'text-anchor':anchor,fill:color},$('labels'));
+  lines.forEach((s,i)=>{const sp=mk('tspan',{x,dy:i?'1.12em':0},t);sp.textContent=s});
+  return t;
+}
+const LB={
+  zone:label('lzone',418,470,['TOLL','ZONE'],'#F2C14E','end'),
+  around:label('laround',400,128,['Trucks go','around →'],'#EC6A44','end'),
+  ws:label('lws',620,415,['Whitestone','trucks +4.1%'],'#EC6A44','start'),
+  tn:label('ltn',995,92,['Throgs Neck','trucks +2.1%'],'#EC6A44','end'),
+  fdr:label('lfdr',560,560,['Toll-free FDR','+8.9% traffic'],'#6FA8DC','start'),
+  mott:label('lmott',0,0,['MOTT HAVEN'],'#ECEDEF','middle'),
+  school:label('lschool',0,0,['schools'],'#ECEDEF','start'),
+};
+// trees spaced along Bruckner + the I-87 connector
+const trees=[];
+for(const [k,n] of [['bruck',34],['deegan',12]])for(let i=0;i<n;i++){
+  const L=LEN[k]*(i+.5)/n, p=$(k).getPointAtLength(L), side=i%2?1:-1;
+  trees.push({x:p.x,y:p.y,side,k:(k==='bruck'?i/n:.35+.5*i/n)});
+}
+trees.forEach(tr=>tr.el=mk('circle',{cx:tr.x,cy:tr.y,r:1,fill:'#7FD08E'},$('trees')));
+const schools=GEO.schools.filter(s=>s[2]<300).map(s=>mk('circle',{cx:s[0],cy:s[1],r:1,fill:'#fff'},$('schools')));
+
+// camera targets (viewBox)
+const FULL=[500.5,497,1001];
+const bb=mott.bb, MCX=(bb[0]+bb[2])/2+4, MCY=(bb[1]+bb[3])/2+4, MW=(bb[2]-bb[0])*1.45;
+const ZOOM=[MCX,MCY,MW];
+function camera(c){const [cx,cy,w]=c;$('map').setAttribute('viewBox',`${cx-w/2} ${cy-w*994/1001/2} ${w} ${w*994/1001}`);return 900/w;}
+
+function renderMap(t){
+  const m=$('map');
+  const vis=t>=S.s4[0]-.3&&t<S.s9[0]+.4;
+  m.style.display=vis?'block':'none'; if(!vis)return;
+  m.style.opacity=Math.min(pr(t,S.s4[0]+.1,.4),1-pr(t,S.s9[0]-.2,.45));
+  m.style.transform=`translateY(${(1-eo(pr(t,S.s4[0]+.1,.6)))*40}px)`;
+
+  // camera: full until s7, zoom in over 1.4s
+  const zk=eio(pr(t,S.s7[0]+.05,1.4));
+  const cam=[lerp(FULL[0],ZOOM[0],zk),lerp(FULL[1],ZOOM[1],zk),Math.exp(lerp(Math.log(FULL[2]),Math.log(ZOOM[2]),zk))];
+  const sc=camera(cam), px=v=>v/sc;
+  // soft circular vignette while zoomed so neighbours fade instead of filling the frame
+  const mr=lerp(160,64,eo(cl(zk*3)));
+  m.style.webkitMaskImage=m.style.maskImage=zk>0?`radial-gradient(circle at 50% 52%, #000 ${mr*.72}%, transparent ${mr}%)`:'none';
+  $('cds').style.strokeWidth=px(1.6); $('cds').style.stroke='#111214';
+  $('labels').style.fontSize=px(34)+'px'; $('labels').style.strokeWidth=px(8);
+
+  // district fills
+  const t5=t-S.s5[0], t6=t-S.s6[0], t7=t-S.s7[0], t8=t-S.s8[0];
+  for(const c of cdEls){
+    let col='#2A2D31', op=1;
+    if(t>=S.s5[0]+.2 && c.top>=0){
+      const a=.4+c.top*.11, k=pr(t5,a,.25);
+      col=k<.5?mix('#2A2D31','#FFD9CC',k*2):mix('#FFD9CC','#EC6A44',(k-.5)*2); // flash light, settle rust
+      if(t>=S.s6[0]&&c.funded) col=mix('#EC6A44','#3F7A4A',eo(pr(t6,.35,.4)));
+      if(t>=S.s6[0]&&!c.funded){const pulse=.5+.5*Math.sin((t6-.6)*7);col=t6>.6?mix('#EC6A44','#FF9C7C',pulse*.6):'#EC6A44';}
+    }
+    if(t>=S.s7[0]){ // focus on Mott Haven
+      const k=eo(pr(t7,.2,.8));
+      if(c.id===201) col=mix('#3F7A4A','#EC6A44',k);
+      else {const from=c.top>=0?(c.funded?'#3F7A4A':'#EC6A44'):'#2A2D31';col=mix(from,'#2A2D31',k);op=lerp(1,.6,k);}
+      if(c.id===201&&t>=S.s8[0]) col=mix('#EC6A44','#5A2E22',eo(pr(t8,0,.6)));
+    }
+    c.el.setAttribute('fill',col); c.el.setAttribute('fill-opacity',op);
+  }
+
+  // toll zone
+  const t4=t-S.s4[0];
+  const crz=$('crz');
+  const zp=t<S.s5[0]?.55+.25*Math.sin(t4*5):lerp(.8,.0,pr(t5,0,.4));
+  crz.setAttribute('fill-opacity',cl(zp)*pr(t4,.3,.3)); crz.setAttribute('stroke-width',px(2)); crz.setAttribute('stroke-opacity',t<S.s5[0]?1:lerp(1,.35,pr(t5,0,.4)));
+  crz.style.display=t>=S.s7[0]+.6?'none':'';
+
+  // bypass route + FDR (s4 only)
+  const lf=1-pr(t5,0,.35);
+  const draw=(id,a,d,w)=>{const e=$(id),k=eio(pr(t4,a,d));e.setAttribute('stroke-width',px(w));e.setAttribute('stroke-dasharray',LEN[id]);e.setAttribute('stroke-dashoffset',LEN[id]*(1-k));e.style.opacity=lf;e.style.display=t>=S.s6[0]?'none':'';return k};
+  const rk=draw('route',1.0,1.7,9); draw('route2',2.2,.7,9); draw('fdr',2.9,.8,9);
+  const tr=$('truck');
+  if(t4>1&&t<S.s5[0]){const p=$('route').getPointAtLength(LEN.route*rk);tr.setAttribute('cx',p.x);tr.setAttribute('cy',p.y);tr.setAttribute('r',px(10));tr.style.opacity=1-pr(t4,3,.4);}else tr.style.opacity=0;
+  const lab=(el,a,fade)=>{const k=pr(t4,a,.35);el.style.opacity=Math.min(cl(k*2),fade);};
+  lab(LB.zone,.6,lf); lab(LB.around,1.1,lf); lab(LB.ws,2.3,lf); lab(LB.tn,2.7,lf); lab(LB.fdr,3.3,lf);
+
+  // Mott Haven label + corridor (s7, s8)
+  const ml=LB.mott; ml.setAttribute('x',MCX-6); ml.setAttribute('y',MCY-10);
+  [...ml.children].forEach(s=>s.setAttribute('x',MCX-6));
+  ml.style.opacity=Math.min(pr(t7,1.3,.4),1-pr(t8,.1,.4));
+  const dk=(id,a,d,w)=>{const e=$(id),k=eio(pr(t8,a,d));e.setAttribute('stroke-width',px(w));e.setAttribute('stroke-dasharray',LEN[id]);e.setAttribute('stroke-dashoffset',LEN[id]*(1-k));e.style.display=t>=S.s8[0]?'':'none';return k};
+  dk('bruck',.3,1.3,14); dk('deegan',.9,.8,14);
+  trees.forEach((tr,i)=>{const k=pr(t8,.5+tr.k*1.3,.35);tr.el.setAttribute('r',px(10)*eb(k)*(k>0?1:0));tr.el.setAttribute('cx',tr.x+tr.side*px(15));tr.el.setAttribute('cy',tr.y-tr.side*px(15)*.4);tr.el.style.opacity=t>=S.s8[0]?1:0;});
+  schools.forEach((s,i)=>{const k=pr(t8,1.8+i*.06,.3);s.setAttribute('r',px(9)*eb(k)*(k>0?1:0));s.setAttribute('stroke','#111214');s.setAttribute('stroke-width',px(3));});
+  const ls=LB.school, s0=GEO.schools.filter(s=>s[2]<300)[0];
+  if(s0){ls.setAttribute('x',s0[0]+px(16));ls.setAttribute('y',s0[1]-px(14));[...ls.children].forEach(s=>s.setAttribute('x',s0[0]+px(16)));}
+  ls.style.opacity=pr(t8,2.2,.3)*(1-pr(t,S.s9[0]-.2,.3));
+  ls.style.fontSize=px(28)+'px';
+}
+
+// ---------- scenes ----------
+function sceneOpacity(id,t){const [a,b]=S[id];if(t<a-.01||t>b+.25)return 0;return Math.min(a===0?1:pr(t,a,.16),1-pr(t,b-.12,.2));}
+
+function render(t){
+  for(const id in S){const el=$(id),o=sceneOpacity(id,t);el.style.opacity=o;el.style.display=o>0?'block':'none';
+    const k=S[id][0]===0?1:eo(pr(t,S[id][0],.35));el.style.transform=`scale(${lerp(1.035,1,k)})`;}
+  // slam shake for the 22%
+  const sh=pr(t,.3,.4), amp=(1-sh)*(sh>0?14:0);
+  $('stage').style.transform=`translate(${Math.sin(t*90)*amp}px,${Math.cos(t*77)*amp}px)`;
+
+  // s1
+  const s1=t; $('s1a').style.opacity=1;$('s1a').style.transform=`translateY(${(1-eo(pr(s1,-.4,.5)))*30}px)`;
+  rise($('s1b'),s1,-.25,.5,30);
+  {const k=pr(s1,.12,.33);$('s1c').style.opacity=cl(k*4);$('s1c').style.transform=`scale(${lerp(2.6,1,eo(k))})`;}
+  {const k=pr(s1,1.5,.4);const e=$('s1d');e.style.opacity=cl(k*4);e.style.transform=`rotate(-8deg) scale(${lerp(2.2,1,eb(k))})`;
+   $('s1c').style.filter=k>0?`saturate(${lerp(1,.25,k)}) brightness(${lerp(1,.6,k)})`:'none';}
+  rise($('s1e'),s1,2.2,.4,20);
+
+  // s2
+  const s2=t-S.s2[0];
+  rise($('s2a'),s2,0,.4);rise($('s2b'),s2,.25,.4);
+  rise($('s2r1'),s2,.75,.4,60);rise($('s2r2'),s2,1.3,.4,60);rise($('s2r3'),s2,1.85,.4,60);
+  rise($('s2c'),s2,2.75,.45);
+
+  // s3
+  const s3=t-S.s3[0];
+  rise($('s3k'),s3,0,.4);rise($('s3h'),s3,.1,.4);
+  pop($('s3n1'),s3,.25,.45,.7);pop($('s3n2'),s3,.6,.45,.7);
+  $('s3v2').textContent=(6.26+.03*eo(pr(s3,.6,.8))).toFixed(2);
+  {const k=eio(pr(s3,.9,.6));const ln=$('s3line').querySelector('line');ln.setAttribute('x2',20+880*k);$('s3line').style.opacity=k>0?1:0;}
+  pop($('s3c'),s3,1.35,.45,.6);
+  rise($('s3s'),s3,2.0,.45);
+
+  // s4
+  const s4=t-S.s4[0];
+  rise($('s4a'),s4,0,.4);rise($('s4b'),s4,3.7,.45);rise($('s4s'),s4,3.9,.4,20);
+
+  // s5
+  const s5=t-S.s5[0];
+  rise($('s5a'),s5,0,.4);
+  const lit=GEO.cds.filter(c=>c.top>=0&&s5>=.4+c.top*.11+.12).length;
+  $('s5v').textContent=lit; pop($('s5n'),s5,.3,.4,.7);
+  {const e=$('s5n'),k=pr(s5,.4+14*.11+.12,.4);if(k>0)e.style.transform=`scale(${1+.12*Math.sin(k*Math.PI)})`;}
+  rise($('s5d'),s5,2.1,.4,20);rise($('s5b'),s5,2.6,.45);rise($('s5s'),s5,2.8,.4,20);
+
+  // s6
+  const s6=t-S.s6[0];
+  rise($('s6a'),s6,.1,.45);
+  {const k=pr(s6,.8,.45);const e=$('s6n');e.style.opacity=cl(k*4);e.style.transform=`scale(${lerp(2.2,1,eb(k))})`;}
+  rise($('s6d'),s6,1.1,.4,20);rise($('s6b'),s6,1.6,.5);
+
+  // s7
+  const s7=t-S.s7[0];
+  rise($('s7a'),s7,0,.4);rise($('s7b'),s7,.15,.45);
+  rise($('s7r1'),s7,1.5,.4);rise($('s7r2'),s7,2.0,.4);rise($('s7r3'),s7,2.5,.4);
+
+  // s8
+  const s8=t-S.s8[0];
+  rise($('s8a'),s8,0,.4);rise($('s8b'),s8,.15,.45);
+  rise($('s8r1'),s8,1.7,.4);rise($('s8r2'),s8,2.3,.4);rise($('s8r3'),s8,2.9,.4);
+
+  // s9
+  const s9=t-S.s9[0];
+  rise($('s9a'),s9,.1,.45);rise($('s9b'),s9,.8,.45);pop($('s9c'),s9,1.6,.5,.8);rise($('s9d'),s9,2.2,.45,20);
+
+  renderMap(t);
+}
+window.render=render; window.DURATION=DURATION; window.SCENES=S;
+render(0);
+</script>
+</body>
+</html>
